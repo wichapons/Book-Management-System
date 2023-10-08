@@ -1,6 +1,6 @@
 ## Book Management System
 
-This project is an assignment for BornToDev's Dev Init program. It is a simple book management system that allows you to add, edit, delete and view books. It also allows you to search for books by title, author, year and price.
+This project is an assignment for BornToDev's Dev Init program week 1. It is a simple book management system that allows you to add, edit, delete and view books. It also allows you to search for books by title, author, year and price.
 
 ## Additional Resources
 For more information about BornToDev's Dev Init program, please visit their official website.
