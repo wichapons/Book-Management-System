@@ -1,0 +1,37 @@
+[
+    {
+    "id": 1,
+    "name": "Laptop",
+    "category": "Electronics",
+    "price": 1000,
+    "stock": 5
+  },
+  {
+    "id": 2,
+    "name": "Mobile",
+    "category": "Electronics",
+    "price": 500,
+    "stock": 10
+  },
+  {
+    "id": 3,
+    "name": "Shirt",
+    "category": "Clothes",
+    "price": 50,
+    "stock": 20
+  },
+  {
+    "id": 4,
+    "name": "Pant",
+    "category": "Clothes",
+    "price": 100,
+    "stock": 15
+  },
+  {
+    "id": 5,
+    "name": "Shoe",
+    "category": "Clothes",
+    "price": 150,
+    "stock": 25
+  }
+]
