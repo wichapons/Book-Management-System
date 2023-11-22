@@ -30,64 +30,85 @@ const Product = mongoose.model("Product", productSchema);
 // GET All products
 app.get("/products", async (req, res) => {
   const products = await Product.find();
-  if (products === undefined) {
-    res.send("No product found in database! Please add a product.");
+  if (products === undefined || !products[0]) {
+    res.status(200).send("No product found in database! Please add a product.");
   } else {
     res.status(200).send(products);
   }
 });
 
 //get product by id
-app.get("/products/:id", (req, res) => {
+app.get("/products/:id", async (req, res) => {
   const productID = req.params.id;
-  Product.findById(productID, (err, product) => {
-    if (err) {
-      res.send("Product not found!");
-    } else {
-      res.status(200).send(product);
-    }
-  });
+  await Product.findById(productID)
+    .then((product) => {
+      if (!product) {
+        res.status(200).send("Product not found!");
+      } else {
+        res.status(200).send(product);
+      }
+    })
+    .catch((err) => res.status(500).send(err));
 });
 
 // add new product to database
-app.post("/products/add", (req, res) => {
+app.post("/products/add", async (req, res) => {
   const newProduct = new Product({ ...req.body });
-  newProduct.save((err, product) => {
-    if (err) {
-      res.send("Failed to add product!");
-    } else {
-      res.send("Product added successfully.");
-    }
+  await newProduct.save().then(() => {
+    res.status(200).send("Product added successfully.");
+  }
+  ).catch((err) => {
+    res.status(500).send("Failed to add product!");
   });
-  
-});
+}
+  );
 
 // Update product details
-app.put("/products/:id", (req, res) => {
+app.put("/products/:id", async (req, res) => {
   const productID = req.params.id;
-  Product.updateOne(productID, { ...req.body }, (err, product) => {
-    if (err) {
-      res.send("Product not found!");
+  try{
+    const response = Product.findById(productID);
+    if (!response) {
+      res.status(200).send("Product not found!");
     } else {
-      res.send("Product updated successfully.");
+      await Product.findByIdAndUpdate(productID, { ...req.body })
+        .then(() => {
+          res.status(200).send("Product updated successfully.");
+        })
+        .catch((err) => res.status(500).send("Product not found!"));
     }
-  });
-});
+  } catch{
+    res.status(500).send("Product not found!");
+  }
+}
+);
+  
+  
+   
 
 // DELETE product by id
-app.delete("/products/:id", (req, res) => {
-  Product.deleteOne({ _id: req.params.id }, (err, product) => {
-    if (err) {
-      res.send("Product not found!");
-    } else {
-      res.send("Product deleted successfully.");
-    }
-  });
-});
+app.delete("/products/:id",async (req, res) => {
+  const productID = req.params.id;
+  await Product.findById(productID)
+    .then((product) => {
+      if (!product) {
+        res.status(200).send("Product not found!");
+      } else {
+        //delete that productid in mongodb
+        Product.findByIdAndDelete(productID)
+          .then(() => {
+            res.status(200).send("Product deleted successfully.");
+          })
+          .catch((err) => res.status(500).send("Product not found!"));
+      }
+    })
+    .catch((err) => res.status(500).send(err));
+}
+);
 
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
 });
 
 
-module.exports = app;
+module.exports = {app, Product}
